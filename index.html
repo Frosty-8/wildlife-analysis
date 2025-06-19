@@ -35,35 +35,10 @@
       font-size: 1.1rem;
     }
     code {
-      background: #eaeaea;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 0.95rem;
-    }
-    pre {
-      background: #2d2d2d;
-      color: #f8f8f2;
-      padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-    section {
-      background: white;
-      padding: 1.5rem 2rem;
-      margin-bottom: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
+      background: none;
+      color: inherit;
+      font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+      font-size: inherit;
     }
     nav {
       text-align: center;
@@ -85,6 +60,59 @@
       color: #777;
       margin-top: 3rem;
     }
+
+    /* Section styling with animation */
+    section {
+      background: white;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Code block styling */
+    pre {
+      background: #f4f4f4;
+      color: #222;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      position: relative;
+      white-space: pre-wrap; /* wrap long lines */
+      word-wrap: break-word;
+    }
+
+    /* Copy button styling */
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #2980b9;
+      color: #fff;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      transition: background 0.2s, opacity 0.2s;
+      z-index: 2;
+      user-select: none;
+    }
+    .copy-btn:hover {
+      background: #1abc9c;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -102,7 +130,9 @@
   <section id="data-cleaning" class="animate-section">
     <h2>Data Cleaning</h2>
     <p>The dataset images were cleaned by verifying each image file and removing corrupted images to ensure data integrity before training.</p>
-    <pre><code>def clean_the_data(files):
+    <div style="position:relative;">
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+      <pre><code>def clean_the_data(files):
     cleaned = 0 
     for temp, _, file in os.walk(files):
         for f in file:
@@ -115,13 +145,16 @@
                 os.remove(paths)
                 cleaned += 1
     print("Cleaned the images")</code></pre>
+    </div>
     <p>This cleaning was applied to the train, test, and validation datasets.</p>
   </section>
 
   <section id="data-preprocessing" class="animate-section">
     <h2>Data Preprocessing</h2>
     <p>Images were resized to 64x64 pixels and batched for efficient training using TensorFlow's <code>image_dataset_from_directory</code> method.</p>
-    <pre><code>img_size = (64, 64)
+    <div style="position:relative;">
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+      <pre><code>img_size = (64, 64)
 batch_size = 32
 
 trained_data = tf.keras.preprocessing.image_dataset_from_directory(
@@ -130,6 +163,7 @@ valid_data = tf.keras.preprocessing.image_dataset_from_directory(
     "dataset/valid", seed=42, image_size=img_size, batch_size=batch_size)
 tested_data = tf.keras.preprocessing.image_dataset_from_directory(
     "dataset/test", seed=42, image_size=img_size, batch_size=batch_size)</code></pre>
+    </div>
     <p>Sample images from the training set were visualized to verify correct loading.</p>
   </section>
 
@@ -143,7 +177,9 @@ tested_data = tf.keras.preprocessing.image_dataset_from_directory(
       <li>Dropout layer with 40% rate to prevent overfitting</li>
       <li>Output dense layer with 2 neurons (for 2 classes) and softmax activation</li>
     </ul>
-    <pre><code>model = Sequential([
+    <div style="position:relative;">
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+      <pre><code>model = Sequential([
     Conv2D(32, (3,3), activation='relu', input_shape=(64,64,3)),
     MaxPooling2D(2,2),
     Conv2D(64, (3,3), activation='relu'),
@@ -157,16 +193,20 @@ tested_data = tf.keras.preprocessing.image_dataset_from_directory(
     Dropout(0.4),
     Dense(2, activation='softmax')
 ])</code></pre>
+    </div>
   </section>
 
   <section id="training" class="animate-section">
     <h2>Training</h2>
     <p>The model was compiled with Adam optimizer and sparse categorical crossentropy loss, then trained for 5 epochs.</p>
-    <pre><code>model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
+    <div style="position:relative;">
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+      <pre><code>model.compile(optimizer='adam',
+          loss='sparse_categorical_crossentropy',
+          metrics=['accuracy'])
 
 history = model.fit(trained_data, validation_data=valid_data, epochs=5)</code></pre>
+    </div>
     <p>Training and validation accuracy and loss were tracked to monitor performance.</p>
   </section>
 
@@ -177,10 +217,13 @@ history = model.fit(trained_data, validation_data=valid_data, epochs=5)</code></
       <li>Test Accuracy: ~96%</li>
       <li>Test Loss: ~12.4%</li>
     </ul>
-    <pre><code>test_loss, test_acc = model.evaluate(tested_data)
+    <div style="position:relative;">
+      <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+      <pre><code>test_loss, test_acc = model.evaluate(tested_data)
 
 print(f"Test accuracy : {test_acc:.5f}")
 print(f"Test Loss : {test_loss:.5f}")</code></pre>
+    </div>
   </section>
 
   <footer>
@@ -188,7 +231,7 @@ print(f"Test Loss : {test_loss:.5f}")</code></pre>
   </footer>
 
   <script>
-    // Simple animation on scroll to mimic Framer Motion fade-up effect
+    // Fade-up animation on scroll (like Framer Motion)
     function animateOnScroll() {
       const sections = document.querySelectorAll('.animate-section');
       const triggerBottom = window.innerHeight * 0.85;
@@ -201,9 +244,30 @@ print(f"Test Loss : {test_loss:.5f}")</code></pre>
         }
       });
     }
-
     window.addEventListener('scroll', animateOnScroll);
     window.addEventListener('load', animateOnScroll);
+
+    // Copy code to clipboard function
+    function copyCode(button) {
+      const codeBlock = button.parentElement.querySelector('code');
+      if (!codeBlock) return;
+
+      const text = codeBlock.innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        button.textContent = 'Copied!';
+        button.disabled = true;
+        setTimeout(() => {
+          button.textContent = 'Copy Code';
+          button.disabled = false;
+        }, 1500);
+      }).catch(() => {
+        button.textContent = 'Failed!';
+        setTimeout(() => {
+          button.textContent = 'Copy Code';
+        }, 1500);
+      });
+    }
   </script>
 
 </body>
