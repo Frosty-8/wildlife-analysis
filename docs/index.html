@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Classification Model Documentation</title>
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background: #f5f7fa;
+      color: #333;
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      color: #34495e;
+    }
+    p {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    code {
+      background: #eaeaea;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    section {
+      background: white;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    nav a {
+      color: #2980b9;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #1abc9c;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Image Classification Model Documentation</h1>
+
+  <nav>
+    <a href="#data-cleaning">Data Cleaning</a>
+    <a href="#data-preprocessing">Data Preprocessing</a>
+    <a href="#model-architecture">Model Architecture</a>
+    <a href="#training">Training</a>
+    <a href="#evaluation">Evaluation</a>
+  </nav>
+
+  <section id="data-cleaning" class="animate-section">
+    <h2>Data Cleaning</h2>
+    <p>The dataset images were cleaned by verifying each image file and removing corrupted images to ensure data integrity before training.</p>
+    <pre><code>def clean_the_data(files):
+    cleaned = 0 
+    for temp, _, file in os.walk(files):
+        for f in file:
+            paths = os.path.join(temp, f)
+            try:
+                img = Image.open(paths)
+                img.verify()
+            except Exception:
+                print("Cleaning corrupt images from the files")
+                os.remove(paths)
+                cleaned += 1
+    print("Cleaned the images")</code></pre>
+    <p>This cleaning was applied to the train, test, and validation datasets.</p>
+  </section>
+
+  <section id="data-preprocessing" class="animate-section">
+    <h2>Data Preprocessing</h2>
+    <p>Images were resized to 64x64 pixels and batched for efficient training using TensorFlow's <code>image_dataset_from_directory</code> method.</p>
+    <pre><code>img_size = (64, 64)
+batch_size = 32
+
+trained_data = tf.keras.preprocessing.image_dataset_from_directory(
+    "dataset/train", seed=42, image_size=img_size, batch_size=batch_size)
+valid_data = tf.keras.preprocessing.image_dataset_from_directory(
+    "dataset/valid", seed=42, image_size=img_size, batch_size=batch_size)
+tested_data = tf.keras.preprocessing.image_dataset_from_directory(
+    "dataset/test", seed=42, image_size=img_size, batch_size=batch_size)</code></pre>
+    <p>Sample images from the training set were visualized to verify correct loading.</p>
+  </section>
+
+  <section id="model-architecture" class="animate-section">
+    <h2>Model Architecture</h2>
+    <p>The convolutional neural network (CNN) model was built using Keras Sequential API with the following layers:</p>
+    <ul>
+      <li>4 convolutional layers with increasing filters (32, 64, 128, 256), each followed by max pooling</li>
+      <li>Flatten layer to convert 2D feature maps to 1D feature vector</li>
+      <li>Dense layer with 256 neurons and ReLU activation</li>
+      <li>Dropout layer with 40% rate to prevent overfitting</li>
+      <li>Output dense layer with 2 neurons (for 2 classes) and softmax activation</li>
+    </ul>
+    <pre><code>model = Sequential([
+    Conv2D(32, (3,3), activation='relu', input_shape=(64,64,3)),
+    MaxPooling2D(2,2),
+    Conv2D(64, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Conv2D(128, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Conv2D(256, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Flatten(),
+    Dense(256, activation='relu'),
+    Dropout(0.4),
+    Dense(2, activation='softmax')
+])</code></pre>
+  </section>
+
+  <section id="training" class="animate-section">
+    <h2>Training</h2>
+    <p>The model was compiled with Adam optimizer and sparse categorical crossentropy loss, then trained for 5 epochs.</p>
+    <pre><code>model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+history = model.fit(trained_data, validation_data=valid_data, epochs=5)</code></pre>
+    <p>Training and validation accuracy and loss were tracked to monitor performance.</p>
+  </section>
+
+  <section id="evaluation" class="animate-section">
+    <h2>Evaluation</h2>
+    <p>The trained model was evaluated on the test dataset, achieving:</p>
+    <ul>
+      <li>Test Accuracy: ~96%</li>
+      <li>Test Loss: ~12.4%</li>
+    </ul>
+    <pre><code>test_loss, test_acc = model.evaluate(tested_data)
+
+print(f"Test accuracy : {test_acc:.5f}")
+print(f"Test Loss : {test_loss:.5f}")</code></pre>
+  </section>
+
+  <footer>
+    &copy; 2025 Image Classification Project Documentation
+  </footer>
+
+  <script>
+    // Simple animation on scroll to mimic Framer Motion fade-up effect
+    function animateOnScroll() {
+      const sections = document.querySelectorAll('.animate-section');
+      const triggerBottom = window.innerHeight * 0.85;
+
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+
+        if (sectionTop < triggerBottom) {
+          section.classList.add('visible');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', animateOnScroll);
+    window.addEventListener('load', animateOnScroll);
+  </script>
+
+</body>
+</html>
