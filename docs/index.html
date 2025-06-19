@@ -1,149 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Classification Model Documentation</title>
   <style>
-    /* Reset and base */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    /* General styling for the documentation */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
       line-height: 1.6;
-      background: #f5f7fa;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
       color: #333;
-      padding: 2rem;
-      max-width: 900px;
-      margin: auto;
+      background-color: #f9f9f9;
     }
-    h1, h2, h3 {
-      color: #2c3e50;
-      margin-bottom: 0.5rem;
+
+    /* Dark theme support */
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #e0e0e0;
+        background-color: #1e1e1e;
+      }
     }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+      color: #1a73e8;
+      margin: 1.5em 0 0.5em;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      h1, h2, h3, h4, h5, h6 {
+        color: #8ab4f8;
+      }
+    }
+
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      text-align: center;
-      color: #34495e;
-    }
-    p {
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-    }
-    code {
-      background: #eaeaea;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 0.95rem;
-    }
-    pre {
-      background: #2d2d2d;
-      color: #f8f8f2;
-      padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-    section {
-      background: white;
-      padding: 1.5rem 2rem;
-      margin-bottom: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      font-size: 2em;
+      border-bottom: 2px solid #1a73e8;
+      padding-bottom: 0.3em;
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform: translateY(-20px);
+      animation: fadeInDown 0.5s ease-out forwards;
     }
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
+
+    h2 {
+      font-size: 1.5em;
+      border-left: 4px solid #1a73e8;
+      padding-left: 0.5em;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInLeft 0.5s ease-out forwards;
     }
-    nav {
-      text-align: center;
-      margin-bottom: 3rem;
+
+    /* Paragraphs and lists */
+    p, ul, ol {
+      margin: 0.8em 0;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInLeft 0.5s ease-out forwards;
     }
-    nav a {
-      color: #2980b9;
-      text-decoration: none;
-      margin: 0 1rem;
-      font-weight: 600;
-      transition: color 0.3s ease;
+
+    ul, ol {
+      padding-left: 1.5em;
     }
-    nav a:hover {
-      color: #1abc9c;
+
+    li {
+      margin-bottom: 0.5em;
     }
+
+    /* Code blocks */
+    pre {
+      background-color: #f1f3f5;
+      border-radius: 6px;
+      padding: 1em;
+      overflow-x: auto;
+      border: 1px solid #ddd;
+      position: relative;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: scaleIn 0.3s ease-out forwards;
+      transition: transform 0.2s ease;
+    }
+
+    pre:hover {
+      transform: scale(1.02);
+    }
+
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9em;
+      color: #333;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      pre {
+        background-color: #2d2d2d;
+        border-color: #444;
+      }
+      code {
+        color: #e0e0e0;
+      }
+    }
+
+    /* Syntax highlighting for code */
+    code .keyword { color: #d73a49; }
+    code .string { color: #032f62; }
+    code .function { color: #6f42c1; }
+    code .comment { color: #6a737d; font-style: italic; }
+
+    /* Copy button styling */
+    .copy-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
+      transition: background-color 0.2s;
+    }
+
+    .copy-button:hover {
+      background-color: #1557b0;
+    }
+
+    .copy-button.copied {
+      background-color: #2ea44f;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .copy-button {
+        background-color: #8ab4f8;
+        color: #1e1e1e;
+      }
+      .copy-button:hover {
+        background-color: #6b7280;
+      }
+      .copy-button.copied {
+        background-color: #34d399;
+      }
+    }
+
+    /* Blockquotes for notes or emphasis */
+    blockquote {
+      border-left: 4px solid #1a73e8;
+      padding: 0.5em 1em;
+      background-color: #e8f0fe;
+      margin: 1em 0;
+      border-radius: 4px;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInLeft 0.5s ease-out forwards;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      blockquote {
+        background-color: #2a3b57;
+        border-color: #8ab4f8;
+      }
+    }
+
+    /* Tables for structured data */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInLeft 0.5s ease-out forwards;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8em;
+      text-align: left;
+    }
+
+    th {
+      background-color: #1a73e8;
+      color: white;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      th {
+        background-color: #8ab4f8;
+        color: #1e1e1e;
+      }
+      td {
+        border-color: #444;
+      }
+    }
+
+    /* Footer for copyright */
     footer {
+      margin-top: 2em;
       text-align: center;
-      font-size: 0.9rem;
-      color: #777;
-      margin-top: 3rem;
+      color: #666;
+      font-size: 0.9em;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s ease-out forwards;
     }
+
+    @media (prefers-color-scheme: dark) {
+      footer {
+        color: #aaa;
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+      h2 {
+        font-size: 1.4em;
+      }
+      pre, code {
+        font-size: 0.85em;
+      }
+      .copy-button {
+        font-size: 0.8em;
+        padding: 4px 8px;
+      }
+    }
+
+    /* CSS animations inspired by Framer Motion */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Staggered animation delays */
+    h1 { animation-delay: 0s; }
+    h2:nth-of-type(1) { animation-delay: 0.2s; }
+    h2:nth-of-type(2) { animation-delay: 0.4s; }
+    h2:nth-of-type(3) { animation-delay: 0.6s; }
+    h2:nth-of-type(4) { animation-delay: 0.8s; }
+    h2:nth-of-type(5) { animation-delay: 1.0s; }
+    p:nth-child(n), ul:nth-child(n), blockquote:nth-child(n), pre:nth-child(n) {
+      animation-delay: calc(0.1s * var(--child-index));
+    }
+    footer { animation-delay: 1.2s; }
   </style>
 </head>
 <body>
-
   <h1>Image Classification Model Documentation</h1>
+  
+  <p>This document outlines the development pipeline for an image classification model built using a convolutional neural network (CNN) with TensorFlow/Keras. The model is designed to classify images into two categories, leveraging standard deep learning techniques for data cleaning, preprocessing, model architecture, training, and evaluation. Additional details provide context, best practices, and insights into image classification.</p>
 
-  <nav>
-    <a href="#data-cleaning">Data Cleaning</a>
-    <a href="#data-preprocessing">Data Preprocessing</a>
-    <a href="#model-architecture">Model Architecture</a>
-    <a href="#training">Training</a>
-    <a href="#evaluation">Evaluation</a>
-  </nav>
+  <h2 id="table-of-contents">Table of Contents</h2>
+  <ul>
+    <li><a href="#data-cleaning">Data Cleaning</a></li>
+    <li><a href="#data-preprocessing">Data Preprocessing</a></li>
+    <li><a href="#model-architecture">Model Architecture</a></li>
+    <li><a href="#training">Training</a></li>
+    <li><a href="#evaluation">Evaluation</a></li>
+    <li><a href="#best-practices">Best Practices and Future Improvements</a></li>
+  </ul>
 
-  <section id="data-cleaning" class="animate-section">
-    <h2>Data Cleaning</h2>
-    <p>The dataset images were cleaned by verifying each image file and removing corrupted images to ensure data integrity before training.</p>
-    <pre><code>def clean_the_data(files):
-    cleaned = 0 
+  <h2 id="data-cleaning">Data Cleaning</h2>
+  <p>The dataset images were cleaned to ensure data integrity before training. A Python script verifies each image file using the PIL library’s <code>Image.verify()</code> method, removing corrupted or unreadable images. This process was applied to the train, test, and validation datasets.</p>
+  
+  <p><strong>Why Data Cleaning Matters</strong>: Corrupted images (e.g., truncated files, incorrect formats) can cause errors during training or degrade model performance. Cleaning ensures robustness and consistency in the dataset. The script below checks for corrupted images and logs the number of files removed.</p>
+
+  <pre data-code="import os
+from PIL import Image
+
+def clean_the_data(files):
+    cleaned = 0
     for temp, _, file in os.walk(files):
         for f in file:
             paths = os.path.join(temp, f)
             try:
                 img = Image.open(paths)
-                img.verify()
-            except Exception:
-                print("Cleaning corrupt images from the files")
+                img.verify()  # Verify image integrity
+            except Exception as e:
+                print(f&quot;Removing corrupt image: {paths} ({str(e)})&quot;)
                 os.remove(paths)
                 cleaned += 1
-    print("Cleaned the images")</code></pre>
-    <p>This cleaning was applied to the train, test, and validation datasets.</p>
-  </section>
+    print(f&quot;Cleaned {cleaned} corrupt images&quot;)
+    return cleaned
 
-  <section id="data-preprocessing" class="animate-section">
-    <h2>Data Preprocessing</h2>
-    <p>Images were resized to 64x64 pixels and batched for efficient training using TensorFlow's <code>image_dataset_from_directory</code> method.</p>
-    <pre><code>img_size = (64, 64)
+# Example usage
+clean_the_data(&quot;dataset/train&quot;)
+clean_the_data(&quot;dataset/valid&quot;)
+clean_the_data(&quot;dataset/test&quot;)">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+import os
+from PIL import Image
+
+def clean_the_data(files):
+    cleaned = 0
+    for temp, _, file in os.walk(files):
+        for f in file:
+            paths = os.path.join(temp, f)
+            try:
+                img = Image.open(paths)
+                img.verify()  # Verify image integrity
+            except Exception as e:
+                print(f"Removing corrupt image: {paths} ({str(e)})")
+                os.remove(paths)
+                cleaned += 1
+    print(f"Cleaned {cleaned} corrupt images")
+    return cleaned
+
+# Example usage
+clean_the_data("dataset/train")
+clean_the_data("dataset/valid")
+clean_the_data("dataset/test")
+    </code>
+  </pre>
+
+  <p><strong>Additional Considerations</strong>:</p>
+  <ul>
+    <li><strong>Format Consistency</strong>: Ensure all images are in compatible formats (e.g., JPEG, PNG) to avoid preprocessing errors.</li>
+    <li><strong>Resolution Checks</strong>: Filter images with extreme resolutions to maintain uniformity after resizing.</li>
+    <li><strong>Label Verification</strong>: Confirm each image has a correct label, especially for supervised learning tasks.</li>
+    <li><strong>Metadata Handling</strong>: Remove or standardize EXIF data to prevent unintended biases (e.g., camera-specific artifacts).</li>
+  </ul>
+
+  <blockquote>
+    <p><strong>Note</strong>: For large datasets, consider parallelizing the cleaning process using multiprocessing to improve efficiency.</p>
+  </blockquote>
+
+  <h2 id="data-preprocessing">Data Preprocessing</h2>
+  <p>Images were resized to 64x64 pixels and batched for efficient training using TensorFlow’s <code>image_dataset_from_directory</code> method. This approach leverages directory structures for automatic labeling and supports batch processing for GPU optimization.</p>
+
+  <pre data-code="import tensorflow as tf
+
+img_size = (64, 64)
 batch_size = 32
 
 trained_data = tf.keras.preprocessing.image_dataset_from_directory(
-    "dataset/train", seed=42, image_size=img_size, batch_size=batch_size)
-valid_data = tf.keras.preprocessing.image_dataset_from_directory(
-    "dataset/valid", seed=42, image_size=img_size, batch_size=batch_size)
-tested_data = tf.keras.preprocessing.image_dataset_from_directory(
-    "dataset/test", seed=42, image_size=img_size, batch_size=batch_size)</code></pre>
-    <p>Sample images from the training set were visualized to verify correct loading.</p>
-  </section>
+    &quot;dataset/train&quot;,
+    seed=42,
+    image_size=img_size,
+    batch_size=batch_size,
+    label_mode='int'  # For sparse categorical crossentropy
+)
 
-  <section id="model-architecture" class="animate-section">
-    <h2>Model Architecture</h2>
-    <p>The convolutional neural network (CNN) model was built using Keras Sequential API with the following layers:</p>
-    <ul>
-      <li>4 convolutional layers with increasing filters (32, 64, 128, 256), each followed by max pooling</li>
-      <li>Flatten layer to convert 2D feature maps to 1D feature vector</li>
-      <li>Dense layer with 256 neurons and ReLU activation</li>
-      <li>Dropout layer with 40% rate to prevent overfitting</li>
-      <li>Output dense layer with 2 neurons (for 2 classes) and softmax activation</li>
-    </ul>
-    <pre><code>model = Sequential([
+valid_data = tf.keras.preprocessing.image_dataset_from_directory(
+    &quot;dataset/valid&quot;,
+    seed=42,
+    image_size=img_size,
+    batch_size=batch_size,
+    label_mode='int'
+)
+
+tested_data = tf.keras.preprocessing.image_dataset_from_directory(
+    &quot;dataset/test&quot;,
+    seed=42,
+    image_size=img_size,
+    batch_size=batch_size,
+    label_mode='int'
+)">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+import tensorflow as tf
+
+img_size = (64, 64)
+batch_size = 32
+
+trained_data = tf.keras.preprocessing.image_dataset_from_directory(
+    "dataset/train",
+    seed=42,
+    image_size=img_size,
+    batch_size=batch_size,
+    label_mode='int'  # For sparse categorical crossentropy
+)
+
+valid_data = tf.keras.preprocessing.image_dataset_from_directory(
+    "dataset/valid",
+    seed=42,
+    image_size=img_size,
+    batch_size=batch_size,
+    label_mode='int'
+)
+
+tested_data = tf.keras.preprocessing.image_dataset_from_directory(
+    "dataset/test",
+    seed=42,
+    image_size=img_size,
+    batch_size=batch_size,
+    label_mode='int'
+)
+    </code>
+  </pre>
+
+  <p><strong>Visualization</strong>: Sample images from the training set were visualized to verify correct loading and labeling. This step is critical to detect issues like mislabeled data or incorrect preprocessing.</p>
+
+  <p><strong>Enhanced Preprocessing</strong>:</p>
+  <ul>
+    <li><strong>Data Augmentation</strong>: To improve model generalization, apply techniques like random flips, rotations, and brightness adjustments. Example:</li>
+  </ul>
+  <pre data-code="data_augmentation = tf.keras.Sequential([
+    tf.keras.layers.RandomFlip(&quot;horizontal&quot;),
+    tf.keras.layers.RandomRotation(0.1),
+    tf.keras.layers.RandomZoom(0.1),
+])
+
+trained_data = trained_data.map(lambda x, y: (data_augmentation(x, training=True), y))">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+data_augmentation = tf.keras.Sequential([
+    tf.keras.layers.RandomFlip("horizontal"),
+    tf.keras.layers.RandomRotation(0.1),
+    tf.keras.layers.RandomZoom(0.1),
+])
+
+trained_data = trained_data.map(lambda x, y: (data_augmentation(x, training=True), y))
+    </code>
+  </pre>
+  <ul>
+    <li><strong>Normalization</strong>: Scale pixel values to [0,1] or standardize them (mean=0, std=1) to stabilize training.</li>
+    <li><strong>Prefetching/Caching</strong>: Optimize data loading with <code>trained_data.prefetch(tf.data.AUTOTUNE)</code> to reduce I/O bottlenecks.</li>
+    <li><strong>Class Imbalance</strong>: Check for imbalanced classes and apply oversampling, undersampling, or class weights if needed.</li>
+  </ul>
+
+  <h2 id="model-architecture">Model Architecture</h2>
+  <p>The CNN model was built using Keras’ Sequential API, designed for binary image classification with the following layers:</p>
+  <ul>
+    <li>4 convolutional layers with increasing filters (32, 64, 128, 256), each followed by max pooling</li>
+    <li>Flatten layer to convert 2D feature maps to 1D</li>
+    <li>Dense layer with 256 neurons and ReLU activation</li>
+    <li>Dropout layer (40% rate) to prevent overfitting</li>
+    <li>Output dense layer with 2 neurons and softmax activation</li>
+  </ul>
+
+  <pre data-code="from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+
+model = Sequential([
     Conv2D(32, (3,3), activation='relu', input_shape=(64,64,3)),
     MaxPooling2D(2,2),
     Conv2D(64, (3,3), activation='relu'),
@@ -156,55 +468,205 @@ tested_data = tf.keras.preprocessing.image_dataset_from_directory(
     Dense(256, activation='relu'),
     Dropout(0.4),
     Dense(2, activation='softmax')
-])</code></pre>
-  </section>
+])
 
-  <section id="training" class="animate-section">
-    <h2>Training</h2>
-    <p>The model was compiled with Adam optimizer and sparse categorical crossentropy loss, then trained for 5 epochs.</p>
-    <pre><code>model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
+model.summary()">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 
-history = model.fit(trained_data, validation_data=valid_data, epochs=5)</code></pre>
-    <p>Training and validation accuracy and loss were tracked to monitor performance.</p>
-  </section>
+model = Sequential([
+    Conv2D(32, (3,3), activation='relu', input_shape=(64,64,3)),
+    MaxPooling2D(2,2),
+    Conv2D(64, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Conv2D(128, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Conv2D(256, (3,3), activation='relu'),
+    MaxPooling2D(2,2),
+    Flatten(),
+    Dense(256, activation='relu'),
+    Dropout(0.4),
+    Dense(2, activation='softmax')
+])
 
-  <section id="evaluation" class="animate-section">
-    <h2>Evaluation</h2>
-    <p>The trained model was evaluated on the test dataset, achieving:</p>
-    <ul>
-      <li>Test Accuracy: ~96%</li>
-      <li>Test Loss: ~12.4%</li>
-    </ul>
-    <pre><code>test_loss, test_acc = model.evaluate(tested_data)
+model.summary()
+    </code>
+  </pre>
 
-print(f"Test accuracy : {test_acc:.5f}")
-print(f"Test Loss : {test_loss:.5f}")</code></pre>
-  </section>
+  <p><strong>Architecture Insights</strong>:</p>
+  <ul>
+    <li><strong>Convolutional Layers</strong>: Extract spatial features like edges and textures. Increasing filters capture more complex patterns.</li>
+    <li><strong>Max Pooling</strong>: Reduces spatial dimensions, lowering computational cost and preventing overfitting.</li>
+    <li><strong>Dropout</strong>: Randomly deactivates neurons during training to enhance generalization.</li>
+    <li><strong>Softmax</strong>: Outputs probabilities for the two classes, suitable for binary classification.</li>
+  </ul>
+
+  <p><strong>Improvements</strong>:</p>
+  <ul>
+    <li>Add batch normalization after convolutional layers to stabilize training: <code>BatchNormalization()</code>.</li>
+    <li>Use global average pooling instead of Flatten to reduce parameters: <code>GlobalAveragePooling2D()</code>.</li>
+    <li>Experiment with architectures like ResNet or EfficientNet for better performance.</li>
+  </ul>
+
+  <h2 id="training">Training</h2>
+  <p>The model was compiled with the Adam optimizer and sparse categorical crossentropy loss, then trained for 5 epochs on the training dataset with validation on the validation dataset.</p>
+
+  <pre data-code="model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    trained_data,
+    validation_data=valid_data,
+    epochs=5,
+    callbacks=[
+        tf.keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+    ]
+)">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    trained_data,
+    validation_data=valid_data,
+    epochs=5,
+    callbacks=[
+        tf.keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+    ]
+)
+    </code>
+  </pre>
+
+  <p><strong>Training Details</strong>:</p>
+  <ul>
+    <li><strong>Adam Optimizer</strong>: Adapts learning rate for faster convergence.</li>
+    <li><strong>Loss Function</strong>: Sparse categorical crossentropy is suitable for integer-labeled multi-class problems.</li>
+    <li><strong>Early Stopping</strong>: Added to prevent overfitting by halting training if validation loss stops improving.</li>
+  </ul>
+
+  <p><strong>Monitoring</strong>: Training and validation accuracy/loss were plotted to diagnose issues like overfitting or underfitting. Example visualization code:</p>
+  <pre data-code="import matplotlib.pyplot as plt
+
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+import matplotlib.pyplot as plt
+
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+    </code>
+  </pre>
+
+  <h2 id="evaluation">Evaluation</h2>
+  <p>The trained model was evaluated on the test dataset, achieving approximately 96% accuracy and 12.4% loss.</p>
+
+  <pre data-code="test_loss, test_acc = model.evaluate(tested_data)
+print(f&quot;Test Accuracy: {test_acc:.5f}&quot;)
+print(f&quot;Test Loss: {test_loss:.5f}&quot;)">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+test_loss, test_acc = model.evaluate(tested_data)
+print(f"Test Accuracy: {test_acc:.5f}")
+print(f"Test Loss: {test_loss:.5f}")
+    </code>
+  </pre>
+
+  <p><strong>Evaluation Insights</strong>:</p>
+  <ul>
+    <li><strong>High Accuracy</strong>: 96% suggests good generalization, but further analysis (e.g., confusion matrix) is needed to confirm performance across classes.</li>
+    <li><strong>Loss Interpretation</strong>: A loss of 0.124 is reasonable but could be reduced with longer training or model tweaks.</li>
+  </ul>
+
+  <p><strong>Additional Metrics</strong>: Compute precision, recall, and F1-score to assess performance, especially for imbalanced datasets.</p>
+  <pre data-code="from sklearn.metrics import classification_report
+import numpy as np
+
+y_pred = []
+y_true = []
+for images, labels in tested_data:
+    preds = model.predict(images)
+    y_pred.extend(np.argmax(preds, axis=1))
+    y_true.extend(labels.numpy())
+
+print(classification_report(y_true, y_pred, target_names=['Class 0', 'Class 1']))">
+    <button class="copy-button" onclick="copyCode(this)">Copy Code</button>
+    <code class="python">
+from sklearn.metrics import classification_report
+import numpy as np
+
+y_pred = []
+y_true = []
+for images, labels in tested_data:
+    preds = model.predict(images)
+    y_pred.extend(np.argmax(preds, axis=1))
+    y_true.extend(labels.numpy())
+
+print(classification_report(y_true, y_pred, target_names=['Class 0', 'Class 1']))
+    </code>
+  </pre>
+
+  <h2 id="best-practices">Best Practices and Future Improvements</h2>
+  <p><strong>Best Practices for Image Classification</strong>:</p>
+  <ul>
+    <li><strong>Dataset Quality</strong>: Use high-quality, diverse images and ensure balanced class distribution.</li>
+    <li><strong>Hyperparameter Tuning</strong>: Experiment with learning rates, batch sizes, and epochs using grid search or random search.</li>
+    <li><strong>Transfer Learning</strong>: Leverage pre-trained models (e.g., VGG16, ResNet50) for better performance with limited data.</li>
+    <li><strong>Model Interpretability</strong>: Use techniques like Grad-CAM to visualize which image regions influence predictions.</li>
+    <li><strong>Deployment</strong>: Optimize the model for inference (e.g., quantization, TensorFlow Lite) if deploying on edge devices.</li>
+  </ul>
+
+  <p><strong>Future Improvements</strong>:</p>
+  <ul>
+    <li>Increase epochs or use learning rate scheduling to improve convergence.</li>
+    <li>Implement k-fold cross-validation for robust performance estimation.</li>
+    <li>Explore advanced architectures like Vision Transformers (ViT) for potentially better accuracy.</li>
+    <li>Add automated hyperparameter tuning with tools like Keras Tuner.</li>
+  </ul>
 
   <footer>
-    &copy; 2025 Image Classification Project Documentation
+    <p>© 2025 Image Classification Project Documentation</p>
   </footer>
 
   <script>
-    // Simple animation on scroll to mimic Framer Motion fade-up effect
-    function animateOnScroll() {
-      const sections = document.querySelectorAll('.animate-section');
-      const triggerBottom = window.innerHeight * 0.85;
-
-      sections.forEach(section => {
-        const sectionTop = section.getBoundingClientRect().top;
-
-        if (sectionTop < triggerBottom) {
-          section.classList.add('visible');
-        }
+    function copyCode(button) {
+      const pre = button.parentElement;
+      const code = pre.getAttribute('data-code');
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = 'Copy Code';
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy code:', err);
       });
     }
 
-    window.addEventListener('scroll', animateOnScroll);
-    window.addEventListener('load', animateOnScroll);
+    // Set animation delays for staggered effects
+    document.querySelectorAll('p, ul, blockquote, pre').forEach((el, index) => {
+      el.style.setProperty('--child-index', index + 1);
+    });
   </script>
-
 </body>
 </html>
